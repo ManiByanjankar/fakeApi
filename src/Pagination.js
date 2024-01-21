@@ -57,8 +57,8 @@ const Pagination = () => {
       <button onClick={handlePreviousPage} disabled={page <= 1}>
         Previous
       </button>
-      <span>{`Page ${page} of ${nbpages}`}</span>
-      <button onClick={handleNextPage} disabled={page >= nbpages}>
+      <span>{`Page ${page} of ${nbpages - 1}`}</span>
+      <button onClick={handleNextPage} disabled={page >= nbpages - 1}>
         Next
       </button>
     </div>

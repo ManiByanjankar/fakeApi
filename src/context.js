@@ -17,32 +17,56 @@ const AppProvider = ({ children }) => {
 
   const nbpages = 5;
 
+  function calculatePagination(pageNumber, limit) {
+    // Ensure page number is a positive integer
+    const pageNumbers = Math.max(1, Math.floor(pageNumber));
+    console.log("FUNCTION page number", pageNumbers);
+
+    console.log("FUNCTION page number", pageNumbers);
+    // Calculate start and end indices
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    return { start, end, pageNumbers };
+  }
+
   const getFakeApi = async (url, limit) => {
     try {
       console.log("sfgsdfgsdf", `${url}${limit}`);
       const res = await axios.get(`${url}${limit}`);
       const data = res.data;
-      console.log(data, "++++++++>");
-      if (data) {
-        setProducts(data);
-        setIsLoading(false);
-      } else {
-        setIsError({ show: true, msg: "data.error" });
-      }
+      return data;
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
-    console.log(`${API_URL}${newPage * nbpages}`);
-    getFakeApi(`${API_URL}`, `${newPage * nbpages}`);
+  const handlePageChange = (updatedPage) => {
+    setPage(updatedPage);
+    console.log(page, "<====>");
+    console.log(`${API_URL}${page * nbpages}`);
+    //  getFakeApi(`${API_URL}`, `${page * nbpages}`);
   };
 
   useEffect(() => {
-    getFakeApi(API_URL, nbpages);
-  }, [nbpages]);
+    //fetch all data from api and filter only the required data in a page
+    async function fetchData() {
+      const data = await getFakeApi(`${API_URL}`, `${page * nbpages}`);
+      if (data) {
+        console.log(data, "++++++>BEFORE SLICE");
+        const { start, end } = calculatePagination(page, nbpages);
+        let slicedData = data.slice(start, end);
+        console.log("SLICE FROM", start, end);
+        console.log(slicedData, "++++++++>AFTER SLICE");
+        setProducts(slicedData);
+        setIsLoading(false);
+      } else {
+        setIsError({ show: true, msg: "data.error" });
+      }
+    }
+    fetchData();
+  }, [page]);
+
   return (
     <AppContext.Provider
       value={{ isLoading, isError, products, page, nbpages, handlePageChange }}>

@@ -8,7 +8,6 @@ const Product = () => {
     <>
       {products &&
         products.map((currentProduct, index) => {
-          console.log(currentProduct, "=====>");
           return (
             <div key={index}>
               <h2>Current Product</h2>
